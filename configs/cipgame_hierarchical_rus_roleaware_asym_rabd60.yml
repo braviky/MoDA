@@ -1,0 +1,119 @@
+model:
+  type: moda
+  res_feat_dim: 128
+  pair_feat_dim: 64
+  diffusion:
+    num_steps: 100
+    eps_net_opt:
+      num_layers: 6
+    flow_opt:
+      ot_coupling: true
+      seq_stochasticity: 0.0
+      seq_temperature: 1.0
+      seq_loss_time_weight: false
+    cahf:
+      hierarchical_rus_role:
+        enabled: true
+        num_roles: 3
+      identity_directed_modal:
+        enabled: true
+        role_dim: 3
+        semantic_edge_dim: 8
+  train_structure: true
+  train_sequence: true
+train:
+  loss_weights:
+    rot: 1.0
+    pos: 1.0
+    seq: 1.0
+
+
+    semantic_rus_role: 0.05
+  max_iters: 50000
+  val_freq: 250
+  val_t_steps: [10, 30, 50, 70, 90]
+  batch_size: 8
+  seed: 2022
+  max_grad_norm: 100.0
+  optimizer:
+    type: adam
+    lr: 0.0001
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.999
+  scheduler:
+    type: plateau
+    factor: 0.8
+    patience: 10
+    min_lr: 5.0e-06
+dataset:
+  train:
+    type: sabdab
+    summary_path: ../sabdab/260112/sabdab_summary_all.tsv
+    total_data_dir: ../sabdab/260112/all_structures/chothia
+    processed_dir: ./data/processed/retrain/rabd_test/multi/no_aug_cahf_rabd60
+    data_number_scheme: chothia
+    split: train
+    reset_strc: false
+    transform:
+    - type: mask_semantic_coalition
+
+
+      mode: random_multi_cdrs
+    - type: merge_chains
+    - type: patch_around_anchor
+    test_data: ./test_rabd60_dbids.txt
+    cluster_exclusion_use_ref_ids: true
+    test_cluster_source_processed_dir: ./data/processed/h3only_moda_style60_20260623_inferencefix/all
+  val:
+    type: sabdab
+    summary_path: ../sabdab/260112/sabdab_summary_all.tsv
+    total_data_dir: ../sabdab/260112/all_structures/chothia
+    processed_dir: ./data/processed/retrain/rabd_test/multi/no_aug_cahf_rabd60
+    data_number_scheme: chothia
+    split: val
+    reset_strc: false
+    transform:
+    - type: mask_semantic_coalition
+      mode: h3_only
+    - type: merge_chains
+    - type: patch_around_anchor
+    test_data: ./test_rabd60_dbids.txt
+    cluster_exclusion_use_ref_ids: true
+    test_cluster_source_processed_dir: ./data/processed/h3only_moda_style60_20260623_inferencefix/all
+  val_h3_l1:
+    type: sabdab
+    summary_path: ../sabdab/260112/sabdab_summary_all.tsv
+    total_data_dir: ../sabdab/260112/all_structures/chothia
+    processed_dir: ./data/processed/retrain/rabd_test/multi/no_aug_cahf_rabd60
+    data_number_scheme: chothia
+    split: val
+    reset_strc: false
+    transform:
+    - type: mask_semantic_coalition
+      mode: all
+      selection: [H3, L1]
+    - type: merge_chains
+    - type: patch_around_anchor
+    test_data: ./test_rabd60_dbids.txt
+    cluster_exclusion_use_ref_ids: true
+    test_cluster_source_processed_dir: ./data/processed/h3only_moda_style60_20260623_inferencefix/all
+  val_all:
+    type: sabdab
+    summary_path: ../sabdab/260112/sabdab_summary_all.tsv
+    total_data_dir: ../sabdab/260112/all_structures/chothia
+    processed_dir: ./data/processed/retrain/rabd_test/multi/no_aug_cahf_rabd60
+    data_number_scheme: chothia
+    split: val
+    reset_strc: false
+    transform:
+    - type: mask_semantic_coalition
+      mode: all
+    - type: merge_chains
+    - type: patch_around_anchor
+    test_data: ./test_rabd60_dbids.txt
+    cluster_exclusion_use_ref_ids: true
+    test_cluster_source_processed_dir: ./data/processed/h3only_moda_style60_20260623_inferencefix/all
+
+
+

@@ -1,0 +1,5 @@
+name: moda39
+channels:
+  - defaults
+  - pyg
+prefix: /app/lmy/miniconda3/envs/moda39
